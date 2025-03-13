@@ -1,1 +1,1 @@
-I have no clue how was this a fork repo was created locally with visual studio from scratch
+this was not suposed to be forked from another repo an error occuered and the 2 repos collided
