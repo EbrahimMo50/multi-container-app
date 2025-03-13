@@ -1,0 +1,100 @@
+name: dockercompose10384327655423507191
+services:
+  app1:
+    build:
+      context: C:\Users\Ebrahim.Mohsen\source\repos\multi-container-app
+      dockerfile: app1/Dockerfile
+    depends_on:
+      rabbitmq:
+        condition: service_started
+        required: true
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: "8080"
+      ASPNETCORE_HTTPS_PORTS: "8081"
+      ASPNETCORE_URLS: http://*:80
+    image: app1
+    networks:
+      mynetwork: null
+    ports:
+      - mode: ingress
+        target: 80
+        published: "5432"
+        protocol: tcp
+      - mode: ingress
+        target: 8080
+        protocol: tcp
+      - mode: ingress
+        target: 8081
+        protocol: tcp
+    volumes:
+      - type: bind
+        source: C:\Users\Ebrahim.Mohsen\AppData\Roaming/Microsoft/UserSecrets
+        target: /home/app/.microsoft/usersecrets
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: bind
+        source: C:\Users\Ebrahim.Mohsen\AppData\Roaming/ASP.NET/Https
+        target: /home/app/.aspnet/https
+        read_only: true
+        bind:
+          create_host_path: true
+  app2:
+    build:
+      context: C:\Users\Ebrahim.Mohsen\source\repos\multi-container-app
+      dockerfile: app2/Dockerfile
+    depends_on:
+      rabbitmq:
+        condition: service_started
+        required: true
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: "8080"
+      ASPNETCORE_HTTPS_PORTS: "8081"
+      ASPNETCORE_URLS: http://*:80
+    image: app2
+    networks:
+      mynetwork: null
+    ports:
+      - mode: ingress
+        target: 80
+        published: "5433"
+        protocol: tcp
+      - mode: ingress
+        target: 8080
+        protocol: tcp
+      - mode: ingress
+        target: 8081
+        protocol: tcp
+    volumes:
+      - type: bind
+        source: C:\Users\Ebrahim.Mohsen\AppData\Roaming/Microsoft/UserSecrets
+        target: /home/app/.microsoft/usersecrets
+        read_only: true
+        bind:
+          create_host_path: true
+      - type: bind
+        source: C:\Users\Ebrahim.Mohsen\AppData\Roaming/ASP.NET/Https
+        target: /home/app/.aspnet/https
+        read_only: true
+        bind:
+          create_host_path: true
+  rabbitmq:
+    environment:
+      RABBITMQ_DEFAULT_PASS: 1234!
+      RABBITMQ_DEFAULT_USER: myuser
+    healthcheck:
+      test:
+        - CMD
+        - rabbitmqctl
+        - status
+      timeout: 10s
+      interval: 30s
+      retries: 3
+    image: rabbitmq:3-management
+    networks:
+      mynetwork: null
+networks:
+  mynetwork:
+    name: dockercompose10384327655423507191_mynetwork
